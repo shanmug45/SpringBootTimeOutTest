@@ -22,7 +22,14 @@ public class DoubleResponse {
     @JsonProperty("timestamp")
     private String timestamp;
 
+    @JsonProperty("error")
+    private ErrorResponse errorResponse;
+
     public DoubleResponse() {
+    }
+
+    public DoubleResponse(ErrorResponse errorResponse) {
+        this.errorResponse = errorResponse;
     }
 
     public DoubleResponse(Integer input, Integer result, Long delay, Long timeout, Long actualDuration, String timestamp) {
@@ -32,6 +39,14 @@ public class DoubleResponse {
         this.timeout = timeout;
         this.actualDuration = actualDuration;
         this.timestamp = timestamp;
+    }
+
+    public ErrorResponse getErrorResponse() {
+        return errorResponse;
+    }
+
+    public void setErrorResponse(ErrorResponse errorResponse) {
+        this.errorResponse = errorResponse;
     }
 
     public Integer getInput() {

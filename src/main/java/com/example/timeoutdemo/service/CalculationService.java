@@ -1,6 +1,7 @@
 package com.example.timeoutdemo.service;
 
 import com.example.timeoutdemo.dto.DoubleResponse;
+import com.example.timeoutdemo.dto.ErrorResponse;
 import com.example.timeoutdemo.exception.TimeoutException;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class CalculationService {
         
         // Check if operation will timeout
         if (delayMilliseconds > timeoutMilliseconds) {
-            throw new TimeoutException("Operation timed out after " + timeoutMilliseconds + " milliseconds");
+            return new DoubleResponse(new ErrorResponse("Timeout", "Operation timed out after " + timeoutMilliseconds + " milliseconds"));
         }
         
         // Simulate delay

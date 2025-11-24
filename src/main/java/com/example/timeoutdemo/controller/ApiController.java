@@ -4,7 +4,6 @@ import com.example.timeoutdemo.dto.DelayRequest;
 import com.example.timeoutdemo.dto.DoubleRequest;
 import com.example.timeoutdemo.dto.DoubleResponse;
 import com.example.timeoutdemo.dto.TimeoutRequest;
-import com.example.timeoutdemo.exception.TimeoutException;
 import com.example.timeoutdemo.service.CalculationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -25,8 +24,11 @@ public class ApiController {
     }
 
     @PostMapping("/double")
-    public ResponseEntity<DoubleResponse> doubleNumber(@Valid @RequestBody DoubleRequest request) {
+    public ResponseEntity<?> doubleNumber(@Valid @RequestBody DoubleRequest request) {
         DoubleResponse response = calculationService.doubleNumber(request.getNumber());
+        if (response.getErrorResponse() != null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.getErrorResponse());
+        }
         return ResponseEntity.ok(response);
     }
 
@@ -39,6 +41,7 @@ public class ApiController {
         response.put("delayMilliseconds", request.getMilliseconds());
         
         return ResponseEntity.ok(response);
+        
     }
 
     @PutMapping("/timeout")
@@ -50,16 +53,6 @@ public class ApiController {
         response.put("timeoutMilliseconds", request.getMilliseconds());
         
         return ResponseEntity.ok(response);
-    }
-
-    @ExceptionHandler(TimeoutException.class)
-    public ResponseEntity<Map<String, Object>> handleTimeoutException(TimeoutException ex) {
-        Map<String, Object> error = new HashMap<>();
-        error.put("error", "Timeout");
-        error.put("message", ex.getMessage());
-        error.put("status", 500);
-        
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
     @ExceptionHandler(Exception.class)
